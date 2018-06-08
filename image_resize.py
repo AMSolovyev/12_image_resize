@@ -1,5 +1,5 @@
 from PIL import Image
-import os
+from os.path import exists, join, splitext, sys
 import argparse
 
 
@@ -13,41 +13,34 @@ def get_arguments():
     return parser.parse_args()
 
 
-def has_valid_picture_or_print_msg(arguments):
+def validate_args(arguments):
     if not exists(arguments.path):
-        print('There is not any picture')
+        parser.error(
+            'ERROR: You need have a scale or width and (or) height!'
+        )
         return False
-    if arguments.scale and (arguments.width or arguments.height):
-        print('You need have a scale or width and (or) height!')
+    if not (arguments.scale and (arguments.width or arguments.height)):
+        parser.error(
+            'ERROR: you need have a scale or width and (or) height!'
+        )
         return False
     return True
 
 
 def get_new_parametrs_picture(width, height, new_width, new_height, scale):
-    if int(new_width):
+    if new_width:
         scale = new_width/width
         return new_width, int(height*scale)
-    if int(new_height):
+    if new_height:
         scale = new_height/height
         return int(width*scale), new_height
-    if float(scale):
+    if scale:
         return int(width*scale), int(height*scale)
     return new_width, new_height
 
 
-def resize_picture(picture, width, height, scale):
-    original_width, original_height = picture.size
-    new_width, new_height = get_new_parametrs_picture(
-        original_width,
-        original_height,
-        new_width,
-        new_height,
-        scale
-    )
+def resize_picture(picture, new_width, new_height, scale):
     new_picture = picture.resize((new_width, new_height), Image.ANTIALIAS)
-    print(original_width, original_height, new_width, new_height)
-    if (width / height != new_width / new_height):
-        print('The image proportion was changed!')
     return new_picture
 
 
@@ -57,22 +50,25 @@ def save_resized_picture_to_output(path_to_image, output_path, new_picture):
     picture_file_name = '{}__{}×{}{}'.format(base, width, height, ext)
     if output_path is None:
         new_picture.save(picture_file_name)
-    else:
-        try:
-            makedirs(output_path)
-        except OSError:
-            pass
+    elif output_path is None:
         new_picture.save(join(output_path, picture_file_name))
 
 
 if __name__ == '__main__':
     arguments = get_arguments()
 
-    if not has_valid_picture_or_print_msg(arguments):
-        print('Exit. There isn\'t any arguments valid')
-        sys.exit(1)
+    if not validate_args(arguments):
+        exit('Exit. There isn\'t any arguments valid')
 
     image = Image.open(arguments.path)
+    get_new_parametrs_picture(
+        width,
+        height,
+        arguments.width,
+        arguments.height,
+        arguments.scale
+    )
+
     new_image = resize_picture(
         image,
         arguments.width,
