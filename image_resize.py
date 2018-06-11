@@ -20,16 +20,14 @@ def validate_arguments(parser):
         parser.error(
             'ERROR: you need have to point out the path!'
         )
-    if not (params.scale and (params.width or params.height)):
+    if params.scale and (params.width or params.height):
         parser.error(
             'ERROR: you need have a scale or width and (or) height!'
         )
-    if params.scale < 0:
-        parser.error('ERROR: a scale is positive number')
-    if params.width < 0:
-        parser.error('ERROR: a width is positive number')
-    if params.height < 0:
-        parser.error('ERROR: a height is positive number')
+    if (params.scale <= 0 or params.width <= 0 or params.height <= 0):
+        parser.error(
+            'ERROR: a scale or a width or a height are positive numbers'
+        )
     return True
 
 
@@ -54,21 +52,18 @@ def save_resized_picture_to_output(path_to_image, output_path, new_picture):
     width, height = picture.size
     base, ext = splitext(path_to_image)
     picture_file_name = '{}__{}×{}{}'.format(base, width, height, ext)
-    if os.path.exists(output_path):
+    if not any(
+            os.path.isdir(output_path) or
+            os.path.isfile(picture_file_name)):
         new_picture.save(picture_file_name)
-    else:
-        new_picture.save(path_to_image)
     if os.path.isdir(otput_path):
-        new_picture.save(picture_file_name)
+        new_picture.save(new_picture)
     else:
-        new_picture.save(path_to_image)
+        new_picture.save(picture_file_name)
 
 
 if __name__ == '__main__':
     argument = get_arguments()
-
-    if not validate_args(argument):
-        exit('Exit. There is not any arguments valid')
 
     image = Image.open(argument.path)
     get_new_parametrs_picture(
