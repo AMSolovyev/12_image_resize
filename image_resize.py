@@ -28,6 +28,18 @@ def validate_arguments(parser):
         parser.error(
             'ERROR: a scale or a width or a height are positive numbers'
         )
+    if params.width and params.height and params.scale:
+        parser.error(
+            'ERROR: if you have a width and height you can not have a scale'
+        )
+    if new_width:
+        return True
+    elif new_heigth:
+        return True
+    elif new_scale:
+        return True
+    elif new_width and new_scale:
+        return True
     return True
 
 
@@ -52,14 +64,11 @@ def save_resized_picture_to_output(path_to_image, output_path, new_picture):
     width, height = picture.size
     base, ext = splitext(path_to_image)
     picture_file_name = '{}__{}×{}{}'.format(base, width, height, ext)
-    if not any(
-            os.path.isdir(output_path) or
-            os.path.isfile(picture_file_name)):
-        new_picture.save(picture_file_name)
-    if os.path.isdir(otput_path):
-        new_picture.save(new_picture)
+    if output_path:
+        path_to_save = os.path.join(output_path, picture_file_name)
     else:
-        new_picture.save(picture_file_name)
+        path_to_save = os.path.join(path_to_image, picture_file_name)
+    return new_picture.save(path_to_save)
 
 
 if __name__ == '__main__':
