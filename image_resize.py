@@ -10,20 +10,26 @@ def get_arguments():
     parser.add_argument('-H', '--height', type=int)
     parser.add_argument('-s', '--scale', type=float)
     parser.add_argument('-o', '--output', help='path to put the picture')
+    validate_arguments(parser)
     return parser.parse_args()
 
 
-def validate_args(arguments):
-    if not exists(arguments.path):
+def validate_arguments(parser):
+    params = parser.parse_args()
+    if not params.path:
         parser.error(
-            'ERROR: You need have a scale or width and (or) height!'
+            'ERROR: you need have to point out the path!'
         )
-        return False
-    if not (arguments.scale and (arguments.width or arguments.height)):
+    if not (params.scale and (params.width or params.height)):
         parser.error(
             'ERROR: you need have a scale or width and (or) height!'
         )
-        return False
+    if params.scale < 0:
+        parser.error('ERROR: a scale is positive number')
+    if params.width < 0:
+        parser.error('ERROR: a width is positive number')
+    if params.height < 0:
+        parser.error('ERROR: a height is positive number')
     return True
 
 
@@ -39,7 +45,7 @@ def get_new_parametrs_picture(width, height, new_width, new_height, scale):
     return new_width, new_height
 
 
-def resize_picture(picture, new_width, new_height, scale):
+def resize_picture(picture, new_width, new_height):
     new_picture = picture.resize((new_width, new_height), Image.ANTIALIAS)
     return new_picture
 
@@ -48,33 +54,36 @@ def save_resized_picture_to_output(path_to_image, output_path, new_picture):
     width, height = picture.size
     base, ext = splitext(path_to_image)
     picture_file_name = '{}__{}×{}{}'.format(base, width, height, ext)
-    if output_path is None:
+    if os.path.exists(output_path):
         new_picture.save(picture_file_name)
-    elif output_path is None:
-        new_picture.save(join(output_path, picture_file_name))
+    else:
+        new_picture.save(path_to_image)
+    if os.path.isdir(otput_path):
+        new_picture.save(picture_file_name)
+    else:
+        new_picture.save(path_to_image)
 
 
 if __name__ == '__main__':
-    arguments = get_arguments()
+    argument = get_arguments()
 
-    if not validate_args(arguments):
-        exit('Exit. There isn\'t any arguments valid')
+    if not validate_args(argument):
+        exit('Exit. There is not any arguments valid')
 
-    image = Image.open(arguments.path)
+    image = Image.open(argument.path)
     get_new_parametrs_picture(
         width,
         height,
-        arguments.width,
-        arguments.height,
-        arguments.scale
+        argument.width,
+        argument.height,
+        argument.scale
     )
 
     new_image = resize_picture(
         image,
-        arguments.width,
-        arguments.height,
-        arguments.scale
+        argument.width,
+        argument.height,
     )
     save_resized_picture_to_output(
-        arguments.path, arguments.output, new_image)
+        argument.path, argument.output, new_image)
     print('Has the picture done')
