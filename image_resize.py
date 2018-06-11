@@ -32,14 +32,6 @@ def validate_arguments(parser):
         parser.error(
             'ERROR: if you have a width and height you can not have a scale'
         )
-    if new_width:
-        return True
-    elif new_heigth:
-        return True
-    elif new_scale:
-        return True
-    elif new_width and new_scale:
-        return True
     return True
 
 
