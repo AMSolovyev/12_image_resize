@@ -3,7 +3,7 @@ import os
 import argparse
 
 
-def get_arguments():
+def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--path', help='a path to the file')
     parser.add_argument('-w', '--width', type=int)
@@ -31,7 +31,7 @@ def validate_args(argument_parser):
         argument_parser.error(
             'ERROR: you need have a scale or width and (or) height!'
         )
-    if not any([args.scale, args.width, args.height]):
+    if not args.scale and not args.width and not args.height:
         argument_parser.error(
             'ERROR: you have to have one argument at least'
         )
@@ -60,10 +60,6 @@ def compute_result_size(
     if height:
         width = int((height / source_height) * source_width)
         return width, height
-
-
-def generate_output_size_dict(output_size_tuple, output_size_dict):
-    output_size_dict['width'], output_size_dict['height'] = output_size_tuple
 
 
 def resize_image(source_img, output_size_tuple):
@@ -101,7 +97,7 @@ def is_preserve_aspect_ratio(
 if __name__ == '__main__':
     size_params = {}
 
-    argument_parser = get_arguments()
+    argument_parser = get_parser()
 
     valid_args = validate_args(argument_parser)
     source_image = open_image(valid_args.path)
@@ -125,4 +121,4 @@ if __name__ == '__main__':
     resized_img = resize_image(source_image, output_size_tuple)
     output_path = calculate_output_path(valid_args, output_size_tuple)
     resized_img.save(output_path)
-print('The new file is saved as {}'.format(output_path))
+    print('The new file is saved as {}'.format(output_path))
