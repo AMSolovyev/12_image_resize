@@ -10,29 +10,37 @@ def get_arguments():
     parser.add_argument('-H', '--height', type=int)
     parser.add_argument('-s', '--scale', type=float)
     parser.add_argument('-o', '--output', help='path to put the picture')
-    validate_arguments(parser)
-    return parser.parse_args()
+    validated_args = validate_args(parser)
+    return validated_args
 
 
-def validate_arguments(parser):
-    params = parser.parse_args()
-    if not params.path:
+def validate_args(parser):
+    args = parser.parse_args()
+    if not os.path.exists(args.path):
         parser.error(
-            'ERROR: you need have to point out the path!'
+            'ERROR: the specified file does not exist!'
         )
-    if params.scale and (params.width or params.height):
+    if args.output and not os.path.isdir(args.output):
+        parser.error(
+            'ERROR: the specified output is not a directory'
+        )
+    if args.scale and (args.width or args.height):
         parser.error(
             'ERROR: you need have a scale or width and (or) height!'
         )
-    if (params.scale <= 0 or params.width <= 0 or params.height <= 0):
+    if not any([args.scale, args.width, args.height]):
+        parser.error(
+            'ERROR: you have to have one argument at least'
+        )
+    # need check if args <= 0 and (args=None) <= 0
+    if (
+        args.scale and args.scale <= 0 or
+        args.width and args.width <= 0 or
+        args.height and args.height <= 0):
         parser.error(
             'ERROR: a scale or a width or a height are positive numbers'
         )
-    if params.width and params.height and params.scale:
-        parser.error(
-            'ERROR: if you have a width and height you can not have a scale'
-        )
-    return True
+    return args
 
 
 def get_new_parametrs_picture(width, height, new_width, new_height, scale):
@@ -57,9 +65,13 @@ def save_resized_picture_to_output(path_to_image, output_path, new_picture):
     base, ext = splitext(path_to_image)
     picture_file_name = '{}__{}×{}{}'.format(base, width, height, ext)
     if output_path:
+    # if it is a directory you need check it in def validate_args
         path_to_save = os.path.join(output_path, picture_file_name)
     else:
-        path_to_save = os.path.join(path_to_image, picture_file_name)
+    # you can not join old_name_picture and join picture_file_name
+    # because you have a mistake like this:  image.png/image__100x200.png
+    # you need save as new_name_picture like this
+        path_to_save = picture_file_name
     return new_picture.save(path_to_save)
 
 
