@@ -35,15 +35,6 @@ def validate_args(argument_parser):
         argument_parser.error(
             'ERROR: you have to have one argument at least'
         )
-    if (
-        args.scale and args.scale <= 0 or
-        args.width and args.width <= 0 or
-        args.height and args.height <= 0
-    ):
-            parser.error(
-                'ERROR: a scale or a width or a height'
-                ' are positive numbers'
-            )
     return args
 
 
@@ -104,7 +95,7 @@ def is_preserve_aspect_ratio(
         args_width,
         args_height
      ):
-        return int(source_width/args_width) == int(source_height/args_height)
+    return int(source_width/args_width) == int(source_height/args_height)
 
 
 if __name__ == '__main__':
