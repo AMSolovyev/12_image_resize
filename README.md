@@ -7,7 +7,7 @@ The program ```image_resize.py``` changes an image size.
 1. virtualenv -p python3 env
 2. source env/bin/activate
 3. pip install -r requirements.txt
-4. python image_resize.py \<image file path\> \<options\>
+4. python image_resize.py -p /home/linux/PycharmProjects/My_project/venv/picture/085.jpg -w 400
 ```
 
 **Options**
@@ -15,8 +15,9 @@ The program ```image_resize.py``` changes an image size.
 name | key | desription
 --- | --- | ---
 **Help** | `-h, --help`| List of all parameters
+**Path** | `p, --path` | Path to the file
 **Scale** | `-s, --scale`| Resizing scale
-**Width** | `-W, --width`| Width of a new image
+**Width** | `-w, --width`| Width of a new image
 **Height** | `-H, --height`| Height of a new image
 **Output** | `-o, --output`| Output folder path
 
