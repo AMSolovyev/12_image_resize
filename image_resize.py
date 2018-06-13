@@ -5,7 +5,7 @@ import argparse
 
 def get_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--path', help='a path to the file')
+    parser.add_argument('-p', '--path', type=str, help='a path to the file')
     parser.add_argument('-w', '--width', type=int)
     parser.add_argument('-H', '--height', type=int)
     parser.add_argument('-s', '--scale', type=float)
@@ -15,25 +15,34 @@ def get_parser():
 
 def validate_args(argument_parser):
     args = argument_parser.parse_args()
-    if args.output and not os.path.isdir(args.output):
+    if not args.path:
         argument_parser.error(
-            'ERROR: the specified output is not a directory'
+            'ERROR: the path to image was not presented!'
         )
     if not os.path.isfile(args.path):
         argument_parser.error(
             'ERROR: the present file does not exist!'
         )
-    if not args.path:
+    if args.output and not os.path.isdir(args.output):
         argument_parser.error(
-            'ERROR: the path to image was not presented!'
+            'ERROR: the specified output is not a directory'
         )
+
     if args.scale and (args.width or args.height):
         argument_parser.error(
             'ERROR: you need have a scale or width and (or) height!'
         )
-    if not all(args.scale and args.width and ards.scale and args.path):
+    if (
+        args.scale and args.scale <= 0 or
+        args.width and args.width <= 0 or
+        args.height and args.height <= 0
+    ):
+            argument_parser.error(
+                'ERROR: a scale or a width or a height are positive numbers'
+            )
+    if not (args.width or args.height or args.scale):
         argument_parser.error(
-            'ERROR: you do not have any argument!'
+            'A width or a heigth or a scale does not exist'
         )
     return args
 
