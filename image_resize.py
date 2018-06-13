@@ -32,14 +32,6 @@ def validate_args(argument_parser):
         argument_parser.error(
             'ERROR: you need have a scale or width and (or) height!'
         )
-    if (
-        args.scale and args.scale <= 0 or
-        args.width and args.width <= 0 or
-        args.height and args.height <= 0
-    ):
-            argument_parser.error(
-                'ERROR: a scale or a width or a height are positive numbers'
-            )
     if not (args.width or args.height or args.scale):
         argument_parser.error(
             'A width or a heigth or a scale does not exist'
