@@ -31,10 +31,6 @@ def validate_args(argument_parser):
         argument_parser.error(
             'ERROR: you need have a scale or width and (or) height!'
         )
-    if not args.scale and not args.width and not args.height:
-        argument_parser.error(
-            'ERROR: you have to have one argument at least'
-        )
     if not all(args.scale and args.width and ards.scale and args.path):
         argument_parser.error(
             'ERROR: you do not have any argument!'
