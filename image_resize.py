@@ -35,6 +35,10 @@ def validate_args(argument_parser):
         argument_parser.error(
             'ERROR: you have to have one argument at least'
         )
+    if not all(args.scale and args.width and ards.scale and args.path):
+        argument_parser.error(
+            'ERROR: you do not have any argument!'
+        )
     return args
 
 
@@ -66,7 +70,7 @@ def resize_image(source_img, output_size_tuple):
     return source_img.resize(output_size_tuple)
 
 
-def calculate_output_path(args, output_size_tuple):
+def get_output_path(args, output_size_tuple):
     source_img_dir, source_img_name = os.path.split(args.path)
     source_img_name_part, source_img_ext_part = os.path.splitext(
         source_img_name
@@ -119,6 +123,6 @@ if __name__ == '__main__':
         valid_args.scale)
 
     resized_img = resize_image(source_image, output_size_tuple)
-    output_path = calculate_output_path(valid_args, output_size_tuple)
+    output_path = get_output_path(valid_args, output_size_tuple)
     resized_img.save(output_path)
     print('The new file is saved as {}'.format(output_path))
